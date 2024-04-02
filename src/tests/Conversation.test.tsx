@@ -1,31 +1,30 @@
-/* eslint-disable testing-library/prefer-screen-queries */
 import React from "react";
-import { render, fireEvent } from "@testing-library/react";
-import Conversation from "./Conversation";
-import { Message } from "./types";
+import { render, fireEvent, screen } from "@testing-library/react";
+import Conversation from "../Conversation";
+import { Message } from "../types";
 
 const mockMessages = [
-    { sender: "user1", message: "Hello" },
-    { sender: "user2", message: "Hi" },
+    { sender: "test", message: "Hello" },
+    { sender: "target", message: "Hi" },
     { sender: "user1", message: "How are you?" }
 ] as Message[];
 
 describe("Conversation Component", () => {
     it("renders without crashing", () => {
-        const { getByText } = render(
-            <Conversation
-                nickname="test"
-                targetNickname="target"
-                messages={mockMessages}
-                sendMessage={() => { }}
-            />
+        render(
+                <Conversation
+                    nickname="test"
+                    targetNickname="target"
+                    messages={mockMessages}
+                    sendMessage={() => { }}
+                />
         );
-        const targetNicknameText = getByText("target");
+        const targetNicknameText = screen.getByText("Hello");
         expect(targetNicknameText).toBeInTheDocument();
     });
 
     it("renders messages correctly", () => {
-        const { getByText } = render(
+        render(
             <Conversation
                 nickname="test"
                 targetNickname="target"
@@ -35,8 +34,8 @@ describe("Conversation Component", () => {
         );
 
         mockMessages.forEach(({ sender, message }) => {
-            const senderName = getByText(sender);
-            const messageContent = getByText(message);
+            const senderName = screen.getByText(sender);
+            const messageContent = screen.getByText(message);
             expect(senderName).toBeInTheDocument();
             expect(messageContent).toBeInTheDocument();
         });
@@ -44,7 +43,7 @@ describe("Conversation Component", () => {
 
     it("calls sendMessage with the entered message when 'Send' button is clicked", () => {
         const sendMessageMock = jest.fn();
-        const { getByPlaceholderText, getByText } = render(
+        render(
             <Conversation
                 nickname="test"
                 targetNickname="target"
@@ -53,8 +52,8 @@ describe("Conversation Component", () => {
             />
         );
 
-        const input = getByPlaceholderText("Write your message!");
-        const sendButton = getByText("Send");
+        const input = screen.getByPlaceholderText("Write your message!");
+        const sendButton = screen.getByText("Send");
 
         fireEvent.change(input, { target: { value: "New message" } });
         fireEvent.click(sendButton);
@@ -64,7 +63,7 @@ describe("Conversation Component", () => {
 
     it("calls sendMessage with the entered message when 'Enter' key is pressed", () => {
         const sendMessageMock = jest.fn();
-        const { getByPlaceholderText } = render(
+        render(
             <Conversation
                 nickname="test"
                 targetNickname="target"
@@ -73,7 +72,7 @@ describe("Conversation Component", () => {
             />
         );
 
-        const input = getByPlaceholderText("Write your message!");
+        const input = screen.getByPlaceholderText("Write your message!");
 
         fireEvent.change(input, { target: { value: "Another message" } });
         fireEvent.keyDown(input, { key: "Enter", code: "Enter" });

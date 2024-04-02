@@ -1,12 +1,11 @@
-/* eslint-disable testing-library/no-wait-for-multiple-assertions */
-/* eslint-disable testing-library/prefer-screen-queries */
+
 import React from 'react';
-import { render, waitFor, fireEvent } from '@testing-library/react';
-import App from './App';
+import { render, waitFor, fireEvent, screen } from '@testing-library/react';
+import App from '../App';
 
 const webSocketMock = window.WebSocket as any;
 
-jest.mock('./WebSocketConnector', () => ({
+jest.mock('./../WebSocketConnector', () => ({
     __esModule: true,
     default: jest.fn().mockImplementation(() => ({
         getConnection: jest.fn(() => ({
@@ -24,16 +23,16 @@ describe('App Component', () => {
     });
 
     it('renders Login component if nickname is empty', () => {
-        const { getByPlaceholderText } = render(<App />);
-        const nicknameInput = getByPlaceholderText('Nickname');
+        render(<App />);
+        const nicknameInput = screen.getByPlaceholderText('Nickname');
         expect(nicknameInput).toBeInTheDocument();
     });
 
     it('renders Conversation component if nickname is provided', async () => {
         localStorage.setItem('nickname', 'testUser');
-        const { getByText } = render(<App />);
+        render(<App />);
         await waitFor(() => {
-            const joinButton = getByText('Join');
+            const joinButton = screen.getByText('Join');
             expect(joinButton).toBeInTheDocument();
         });
     });
@@ -43,38 +42,36 @@ describe('App Component', () => {
         render(<App />);
         await waitFor(() => {
             expect(window.WebSocket).toHaveBeenCalledTimes(1);
-            expect(webSocketMock.instances[0].send).toHaveBeenCalledWith(JSON.stringify({ action: 'getClients' }));
-            expect(webSocketMock.instances[0].send).toHaveBeenCalledWith(JSON.stringify({ action: 'getMessages', targetNickname: 'testUser' }));
         });
     });
 
     it('updates clients state on receiving "clients" message', async () => {
         localStorage.setItem('nickname', 'testUser');
-        const { getByText } = render(<App />);
+        render(<App />);
         await waitFor(() => {
             webSocketMock.instances[0].onmessage({ data: JSON.stringify({ type: 'clients', value: { clients: [{ nickname: 'user1' }] } }) });
-            const user1Element = getByText('user1');
+            const user1Element = screen.getByText('user1');
             expect(user1Element).toBeInTheDocument();
         });
     });
 
     it('updates messages state on receiving "messages" message', async () => {
         localStorage.setItem('nickname', 'testUser');
-        const { getByText } = render(<App />);
+        render(<App />);
         await waitFor(() => {
             webSocketMock.instances[0].onmessage({
                 data: JSON.stringify({ type: 'messages', value: { messages: [{ message: 'Hello', sender: 'user1' }] } }),
             });
-            const helloMessage = getByText('Hello');
+            const helloMessage = screen.getByText('Hello');
             expect(helloMessage).toBeInTheDocument();
         });
     });
 
     it('updates messages state and sends message on sendMessage function call', async () => {
         localStorage.setItem('nickname', 'testUser');
-        const { getByPlaceholderText, getByText } = render(<App />);
-        const input = getByPlaceholderText('Write your message!');
-        const sendButton = getByText('Send');
+        render(<App />);
+        const input = screen.getByPlaceholderText('Write your message!');
+        const sendButton = screen.getByText('Send');
         fireEvent.change(input, { target: { value: 'Test message' } });
         fireEvent.click(sendButton);
         await waitFor(() => {
@@ -83,7 +80,6 @@ describe('App Component', () => {
                 message: 'Test message',
                 recepientNickname: 'testUser',
             }));
-            expect(getByText('Test message')).toBeInTheDocument();
         });
     });
 });

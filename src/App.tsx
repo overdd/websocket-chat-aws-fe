@@ -101,10 +101,17 @@ function App() {
   return (
     <div className='flex'>
       <div className='flex-none w-16 md:w-40 border-r-2'>
-        <Sidebar clients={clients} setTargetNickname={setTargetNickname} nickname={nickname}/>
+        <Sidebar
+          clients={clients}
+          setTargetNickname={setTargetNickname}
+          nickname={nickname} />
       </div>
       <div className='flex-auto'>
-        <Conversation nickname={nickname} targetNickname={targetNicknameValue} messages={messages} sendMessage={sendMessage} />
+        <Conversation
+          nickname={nickname}
+          targetNickname={targetNicknameValue}
+          messages={messages}
+          sendMessage={sendMessage} />
       </div>
     </div>
   )

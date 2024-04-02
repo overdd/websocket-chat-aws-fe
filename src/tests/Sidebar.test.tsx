@@ -1,8 +1,8 @@
 /* eslint-disable testing-library/prefer-screen-queries */
 import React from "react";
 import { render, fireEvent } from "@testing-library/react";
-import Sidebar from "./Sidebar";
-import { Client } from "./types";
+import Sidebar from "../Sidebar";
+import { Client } from "../types";
 
 const mockClients = [
     { nickname: "user1", connectionId: 'connid1' },
