@@ -1,7 +1,6 @@
 import React from "react";
 import { Client } from "./types";
 
-
 const Sidebar = ({ nickname, clients, setTargetNickname }: { nickname: string, clients: Client[], setTargetNickname: (nickname: string) => void }) => {
 
     return (
@@ -11,8 +10,8 @@ const Sidebar = ({ nickname, clients, setTargetNickname }: { nickname: string, c
                 <span className="invisible md:visible w-0 md:w-auto font-medium">Chats</span>
             </div>
             <div className="flex flex-col items-center md:items-start">
-                {clients.map((client) => (
-                    <button onClick={() => setTargetNickname(client.nickname)}>
+                {clients.map((client, index) => (
+                    <button key={index} onClick={() => setTargetNickname(client.nickname)}>
                         <div className="flex mb-3">
                             <img src={`https://robohash.org/${client.nickname}.png`} alt="" className="w-8 h-8 rounded-full mr-1 " />
                             <div>

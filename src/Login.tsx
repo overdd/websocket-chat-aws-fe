@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-
-interface LoginProps {
-    setNickname: (nickname: string) => void;
-}
+import { LoginProps } from "./support/interfaces";
 
 const Login: React.FC<LoginProps> = ({ setNickname }) => {
     const [nicknameValue, setNicknameValue] = useState("");

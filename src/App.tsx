@@ -55,7 +55,6 @@ function App() {
       value: unknown
     };
 
-    console.log(message);
 
     if (message.type === "clients") {
       setClients((message.value as { clients: Client[] }).clients);
@@ -86,7 +85,6 @@ function App() {
   }
 
   const sendMessage = (message: string) => {
-    console.log({ action: "sendMessage", message, recipientNickname: targetNicknameValue })
     ws.send(JSON.stringify({ action: "sendMessages", message, recepientNickname: targetNicknameValue }))
     setMessages([
       ...messages,
